@@ -1,3 +1,6 @@
 # Programming Exercises
 
-Random programming exercises from codewars.com and hackthissite.org.
+Random programming exercises.
+-codewars.com
+-hackthissite.org
+-kaggle
