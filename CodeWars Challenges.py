@@ -6,7 +6,6 @@ Created on Sun Dec 11 15:56:31 2016
 """
 
 def get_sum(a,b):
-    #good luck!
 
     if a != b:  
         total = 0
@@ -19,124 +18,11 @@ def get_sum(a,b):
         return total
     else:
         return a
-        
-#%%
-        
-get_sum(-2,1)
-#%%
-
-def tickets(people):
-
-    billList = []
-
-    ableToSell = "YES"    
-    
-    if people[0] != 25:
-        ableToSell = "NO"
-        
-    else:
-        changeAvailable = 0
-        price = 25   
-
-        print("changeAvailable", changeAvailable) 
-        
-        for x in people:
-            print(x)
-            billList.append(x)
-            
-            changeNeeded = x - price
-            
-            print("changedNeeded", changeNeeded)        
-            
-            if changeAvailable < changeNeeded:
-                ableToSell = "NO" 
-                
-            else: 
-                
-                twentyFiveIndices = []                
-                fiftyIndices = []                
-                
-                for i in range(len(billList)):
-                    if billList[i] == 25:
-                        twentyFiveIndices.append(i)
-                    if billList[i] == 50:
-                        fiftyIndices.append(i)
-                        
-                if changeNeeded == 25:
-                    if len(twentyFiveIndices) >= 1:
-                        del billList[twentyFiveIndices[0]]
-                    else:
-                        ableToSell = "NO"
-                    
-                if changeNeeded == 50:
-                    if len(twentyFiveIndices) >= 2:
-                        for index in sorted(twentyFiveIndices[0:2], reverse=True):
-                            del billList[index]
-                    elif len(fiftyIndices) >= 1:
-                        del billList[fiftyIndices[0]]
-                    else:
-                        ableToSell = "NO"
-                    
-                if changeNeeded == 75:
-                    if len(fiftyIndices) >= 1 and len(twentyFiveIndices) >= 1:
-                        print("fiftyIndices",fiftyIndices)
-                        billList.remove(25)
-                        billList.remove(50)
-                    elif len(twentyFiveIndices) >= 3:
-                        print(billList)
-                        print(twentyFiveIndices[0:3])
-                        for index in sorted(twentyFiveIndices[0:3], reverse=True):
-                            del billList[index]
-                        print(billList)
-                       
-                    else:
-                        ableToSell = "NO"                    
-              
-            print(billList) 
-            changeAvailable = sum(billList)             
-            print("changeAvailable", changeAvailable)        
-            
-    return ableToSell
-    
-#%%
-
-people = [25, 25, 25, 25, 25, 25, 25, 50, 50, 50, 100, 100, 100, 100]
-
-tickets(people)
-
-def tickets(people):
-  till = {100.0:0, 50.0:0, 25.0:0}
-
-  for paid in people:
-    till[paid] += 1
-    change = paid-25.0
-    
-    for bill in (50,25):
-      while (bill <= change and till[bill] > 0):
-        till[bill] -= 1
-        change -= bill
-
-    if change != 0:
-      return 'NO'
-        
-  return 'YES'
-
-#%%
-
-testList = [111, 222, 333]
-
-print(testList[0])
-
-del testList[0]
-
-print(testList[0:1])
-
-#%%
 
 # Finding Duplicates
 
 def duplicate_count(text):
-    # Your code goes here
+
      uniqueList = []
     
      text = text.lower()    
