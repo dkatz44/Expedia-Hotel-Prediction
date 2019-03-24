@@ -1,3 +1,5 @@
+# Kaggle Expedia Hotel Prediction Competition
+
 import pandas as pd
 from sklearn import metrics
 from sklearn.grid_search import GridSearchCV
@@ -6,9 +8,6 @@ get_ipython().magic(u'matplotlib inline')
 from matplotlib.pylab import rcParams
 from datetime import datetime
 import numpy as np
-
-#%%
-#match_cols = ['user_location_country', 'user_location_region', 'user_location_city', 'hotel_market', 'orig_destination_distance']
 
 def tsInMin(dataSet, dateCol, outputColName):
     
@@ -22,9 +21,6 @@ def tsInMin(dataSet, dateCol, outputColName):
 
     return dataSet
 
-
-# In[15]:
-
 def dayOfYearFromTS(dataSet, dateCol, outputColName):
       
     timeSeries = pd.Series(dataSet[dateCol])
@@ -35,9 +31,6 @@ def dayOfYearFromTS(dataSet, dateCol, outputColName):
     dataSet[outputColName] = timeSeries
 
     return dataSet 
-
-
-# In[6]:
 
 def dayOfYearFromDate(dataSet, dateCol, outputColName):
 
@@ -67,9 +60,6 @@ def fill_nulls_with_median(frameToFill, fillByCol, fillWithCol, newColName):
     
     return frameToFill
 
-
-# In[8]:
-
 def fill_nulls_by_level(frameToFill, fillWithCol, newColName):
     
     frameToFill = fill_nulls_with_median(frameToFill, 'user_location_city', fillWithCol, 'city_col')
@@ -80,9 +70,7 @@ def fill_nulls_by_level(frameToFill, fillWithCol, newColName):
     frameToFill = frameToFill.drop(['city_col','country_col','region_col'],axis=1)
     
     return frameToFill
-    
-
-
+   
 #%%
 
 train = pd.read_csv('/Users/dkatz44/Downloads/train.csv',
@@ -104,49 +92,28 @@ train = pd.read_csv('/Users/dkatz44/Downloads/train.csv',
 # get time stamp in min
 train = tsInMin(train, 'date_time', 'timeStamp_Min')
 
-
-# In[16]:
-
 # get srch_ci (check in date) as day of year
 train = dayOfYearFromTS(train, 'srch_ci', 'srch_ci_DOY')
 #train = dayOfYearFromDate(train, 'srch_ci', 'srch_ci_DOY')
-
-
-# In[20]:
 
 # get srch_co (check out date) as day of year
 train = dayOfYearFromTS(train, 'srch_co', 'srch_co_DOY')
 #train = dayOfYearFromDate(train, 'srch_co', 'srch_co_DOY')
 
-
-# In[23]:
-
 # Train Fill Missing
 
 # Distance
-
 train = fill_nulls_by_level(train, 'orig_destination_distance', 'new_dist_col')
 
-
-# In[25]:
-
 # srch_ci
-
 train = fill_nulls_by_level(train, 'srch_ci_DOY', 'new_srch_ci_col')
 
-
-# In[26]:
-
 # srch_co
-
-# want the median diff between srch_ci and srch_co... 3 days
 train['temp_srch_co_col'] = train['new_srch_ci_col'].astype(int).map(lambda x: x + 3 if x + 3 <= 365                                                                         else ((x + 3) - 365))
 
 train['new_srch_co_col'] = train['srch_co_DOY'].fillna(train['temp_srch_co_col'])
 
 train = train.drop('temp_srch_co_col', axis=1)
-
-#%%
 
 train_ten = pd.read_csv('/Users/dkatz44/Downloads/formatted_ten_percent_train.csv',
                     dtype={'user_id': np.int32,
@@ -162,27 +129,12 @@ train_ten = pd.read_csv('/Users/dkatz44/Downloads/formatted_ten_percent_train.cs
                            }
                    )
 
-#%%
-
 train.to_csv('/Users/dkatz44/Desktop/Train_With_New_Cols.csv', sep=',', index_label='id')
-
-
-# In[5]:
 
 # Import Test Set
 
-#ds = ws.datasets['Expedia_Test.csv']
 ds = ws.datasets['formatted_test_2']
 test = ds.to_dataframe()
-
-
-# In[31]:
-
-#test = test.drop(['new_srch_co_col', 'new_srch_ci_col', 'srch_ci_DOY', 'srch_co_DOY', \
-#                    'city_col', 'country_col', 'region_col'], axis=1)
-
-
-# In[32]:
 
 # Test Set Formatting
 
@@ -195,50 +147,27 @@ test = dayOfYearFromDate(test, 'srch_ci', 'srch_ci_DOY')
 # get srch_co (check out date) as day of year
 test = dayOfYearFromDate(test, 'srch_co', 'srch_co_DOY')
 
-
-# In[120]:
-
 # Test Fill Missing
 
 # Distance
 test = fill_nulls_by_level(test, 'orig_destination_distance', 'new_dist_col')
 
-
-# In[38]:
-
 # srch_ci
 
 test = fill_nulls_by_level(test, 'srch_ci_DOY', 'new_srch_ci_col')
 
-
-# In[39]:
-
 # srch_co
-
-# want the median diff between srch_ci and srch_co... 3 days
+# median diff between srch_ci and srch_co... 3 days
 test['temp_srch_co_col'] = test['new_srch_ci_col'].astype(int).map(lambda x: x + 3 if x + 3 <= 365                                                                         else ((x + 3) - 365))
 
 test['new_srch_co_col'] = test['srch_co_DOY'].fillna(test['temp_srch_co_col'])
 
 test = test.drop('temp_srch_co_col', axis=1)
 
-
-# In[6]:
-
 # Test drop unused columns
-test = test.drop(['date_time','srch_ci','srch_co', 'user_id',                   'srch_co_DOY', 'srch_ci_DOY', 'orig_destination_distance'], axis=1)
-
-
-
-
-
-
-
-
+test = test.drop(['date_time','srch_ci','srch_co', 'user_id', 'srch_co_DOY', 'srch_ci_DOY', 'orig_destination_distance'], axis=1)
 
 #%%
-
-
 
 import numpy as np
 import pandas as pd
@@ -261,7 +190,6 @@ train = pd.read_csv('/Users/dkatz44/Downloads/train.csv',
                    )
 
 print("Train set loaded")
-
 print("Reading test set")
 
 test = pd.read_csv('/Users/dkatz44/Downloads/formatted_test_2.csv',
@@ -305,40 +233,10 @@ exact_matches2 = pd.DataFrame(exact_matches)
 #Read in the XGBoost Results
 
 xgbPreds = pd.read_csv('/Users/dkatz44/Desktop/Expedia XGBoost Results 2.csv')
-
 xgbPreds_df = pd.DataFrame(xgbPreds)
-
 xgbPreds_df2 = xgbPreds_df['hotel_cluster'].str.split(expand=True)
-
-
-
-#xgbPreds_df2.columns = ['zero', 'blankone', 'one', 'blanktwo', 'two', 'blankthree', 'three', 'blankfour', 'four']
-
 xgbPreds_df2.columns = ['zero', 'one', 'two', 'three', 'four']
-
-#xgbPreds_df2 = xgbPreds_df2.drop(['blankone', 'blanktwo', 'blankthree', 'blankfour'], axis=1)
-
-
-
-#xgbPreds_df2
-
-
-#df = pd.DataFrame(np.random.randn(10000,3))
-
-#df.columns = ['ok', 'okok', 'okokok']
-
-
-
 full_preds = pd.concat([exact_matches2, xgbPreds_df2], axis=1)
-
-
-
-#full_preds = df.join(full_preds)
-
-#%%
-
-full_preds
-
 
 #%%
 
@@ -398,80 +296,3 @@ full_preds2['hotel_cluster'] = full_preds2['1A'].map(str) + ' ' + full_preds2['2
 full_preds2 = full_preds2.drop(['1A', '2A', '3A', '4A', '5A', '6A', '7A', '8A', '1B', '2B', '3B', '4B', '5B'], axis=1)
 
 full_preds2.to_csv('/Users/dkatz44/Desktop/Expedia Combined Results 2.csv', sep=',', index_label='id')
-
-#%%
-
-results = pd.read_csv('/Users/dkatz44/Desktop/Expedia Combined Results 2.csv', nrows=100)
-
-#%%
-
-results_head = results.head()
-
-#%%
-
-results_head
-
-#%%
-results_head['hotel_cluster'].unique()
-#%%
-
-def f5(seq, idfun=None): 
-   # order preserving
-   if idfun is None:
-       def idfun(x): return x
-   seen = {}
-   result = []
-   for item in seq:
-       marker = idfun(item)
-       # in old Python versions:
-       # if seen.has_key(marker)
-       # but in new ones:
-       if marker in seen: continue
-       seen[marker] = 1
-       result.append(item)
-   return result
-
-#%%
-
-split_df = results_head['hotel_cluster'].str.split(expand=False)
-
-#%%
-
-split_df
-
-#%%
-
-split_df.columns = ['zero', 'one', 'two', 'three', 'four']
-
-#%%
-
-split_df[0:1]
-
-#%%
-
-ok = f5(split_df[2])
-
-#%%
-
-ok
-
-#%%
-
-list1 = pd.Series([91, 0, 91, 77, 48])
-list2 = pd.Series([1, 2, 3, 4, 5])
-
-#%%
-
-list3 = pd.concat([list1, list2])
-
-list3
-
-#%%
-
-okok = f5(pd.concat([list1, list2]))
-
-#full_preds = [f5(exact_matches[p] + preds[p] + most_common_clusters)[:5] for p in range(len(preds))]
-
-#%%
-
-okok
