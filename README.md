@@ -1,1 +1,1 @@
-# Kaggle Expedia Hotel Prediction Competition
+# Expedia Hotel Prediction
