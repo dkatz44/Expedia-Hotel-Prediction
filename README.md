@@ -1,1 +1,1 @@
-# Expedia Hotel Prediction
+# Expedia Hotel Predictions
